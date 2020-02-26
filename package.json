@@ -1,0 +1,22 @@
+{
+  "name": "kdp-upload",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "depeng <kongdepeng520@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamlazyen/kdp-upload.git"
+  },
+  "keywords": [
+    "upload"
+  ],
+  "bugs": {
+    "url": "https://github.com/iamlazyen/kdp-upload/issues"
+  },
+  "homepage": "https://github.com/iamlazyen/kdp-upload",
+  "dependencies": {
+    "element-ui": "^2.13.0",
+    "vue": "^2.6.11"
+  }
+}
