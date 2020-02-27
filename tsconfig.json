@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
+    "lib": ["es6", "dom"],
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
@@ -35,6 +36,7 @@
     "tests/**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "server"
   ]
 }
