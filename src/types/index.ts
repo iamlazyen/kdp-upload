@@ -1,14 +1,12 @@
+
 export interface UploadFile {
+  id: number;
   name: string;
   size: number;
   file: File;
   chunks: Chunk[];
-}
-
-export interface Table {
-  date: string;
-  name: string;
-  address: string;
+  start: string; // TODO: how to design this type, formate string
+  end: string;
 }
 
 export interface Chunk {

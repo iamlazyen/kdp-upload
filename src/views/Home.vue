@@ -5,85 +5,82 @@
     <el-table
       class="mt"
       border
-      :data="tableData"
+      :data="selectedFiles"
       style="width: 100%">
       <el-table-column
-        prop="date"
-        label="日期"
-        width="180">
+        type="index"
+        width="50">
       </el-table-column>
       <el-table-column
         prop="name"
-        label="姓名"
+        label="文件名"
         width="180">
       </el-table-column>
       <el-table-column
-        prop="address"
-        label="地址">
+        prop="size"
+        label="文件大小">
+      </el-table-column>
+      <el-table-column
+        prop="size"
+        label="状态">
+      </el-table-column>
+      <el-table-column
+        prop="size"
+        label="开始时间">
+      </el-table-column>
+      <el-table-column label="结束时间">
+        <template slot-scope="$scope">
+          <span>{{$scope.row.end}}</span>
+        </template>
       </el-table-column>
     </el-table>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-property-decorator';
-import { UploadFile, Table, Chunk } from '../types/index';
+import Vue from 'vue';
+import Component from 'vue-class-component';
 
+import { UploadFile, Chunk } from '../types/index';
+import { dateStr } from '../utils';
 
 const SIZE = 10 * 1024 * 1024;
 
-
+@Component
 export default class Home extends Vue {
-  tableData: Table[] = [{
-    date: '2016-05-02',
-    name: '王小虎',
-    address: '上海市普陀区金沙江路 1518 弄',
-  }, {
-    date: '2016-05-04',
-    name: '王小虎',
-    address: '上海市普陀区金沙江路 1517 弄',
-  }, {
-    date: '2016-05-01',
-    name: '王小虎',
-    address: '上海市普陀区金沙江路 1519 弄',
-  }, {
-    date: '2016-05-03',
-    name: '王小虎',
-    address: '上海市普陀区金沙江路 1516 弄',
-  }];
-
-  selectedFiles: File [] = []
+  selectedFiles: UploadFile [] = []
 
   selectFiles() {
     const clickEvent = new MouseEvent('click');
     (this.$refs.uploadBtn as Element).dispatchEvent(clickEvent);
+    console.log(this);
   }
 
-  confirmFiles(event: any) {
-    this.selectedFiles = Array.from(event.target.files);
-    if (!this.selectedFiles || this.selectedFiles.length === 0) return;
+  confirmFiles(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const fileList = Array.from(target.files as FileList);
+    if (!fileList || fileList.length === 0) return;
 
-    this.uploadFiles();
+    this.uploadFiles(fileList);
   }
 
-  uploadFiles() {
-    this.selectedFiles.forEach((file: File) => {
-      this.uploadFile(file);
-    });
+  uploadFiles(fileList: File[]) {
+    this.selectedFiles = fileList.map((rawFile) => this.enrichFile(rawFile));
+    this.selectedFiles.forEach((file) => this.uploadFile(file));
   }
 
-  uploadFile(rawFile: File) {
-    const file = this.enrichFile(rawFile);
+  uploadFile(file: UploadFile) {
     console.log(file);
   }
 
-  enrichFile(rawFile: File) {
+  enrichFile(rawFile: File): UploadFile {
     const result = {} as UploadFile;
     result.file = rawFile;
+    result.start = dateStr(new Date());
     result.name = rawFile.name;
     result.size = rawFile.size;
     result.chunks = this.buildChunks(result.file);
-
+    result.end = '-';
     return result;
   }
 
