@@ -7,8 +7,16 @@ export interface UploadFile {
   chunks: Chunk[];
   start: string; // TODO: how to design this type, formate string
   end: string;
+  status: Status;
 }
 
 export interface Chunk {
   file: Blob;
+}
+
+export enum Status {
+  Ready = 'ready',
+  Uploading = 'uploading',
+  Pause = 'pause',
+  Success = 'success'
 }

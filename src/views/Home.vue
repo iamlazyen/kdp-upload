@@ -41,7 +41,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 
-import { UploadFile, Chunk } from '../types/index';
+import { UploadFile, Chunk, Status } from '../types/index';
 import { dateStr } from '../utils';
 
 const SIZE = 10 * 1024 * 1024;
@@ -53,7 +53,6 @@ export default class Home extends Vue {
   selectFiles() {
     const clickEvent = new MouseEvent('click');
     (this.$refs.uploadBtn as Element).dispatchEvent(clickEvent);
-    console.log(this);
   }
 
   confirmFiles(e: Event) {
@@ -70,17 +69,21 @@ export default class Home extends Vue {
   }
 
   uploadFile(file: UploadFile) {
+    file.status = Status.Uploading;
     console.log(file);
   }
 
   enrichFile(rawFile: File): UploadFile {
     const result = {} as UploadFile;
+
     result.file = rawFile;
     result.start = dateStr(new Date());
     result.name = rawFile.name;
     result.size = rawFile.size;
     result.chunks = this.buildChunks(result.file);
     result.end = '-';
+    result.status = Status.Ready;
+
     return result;
   }
 
