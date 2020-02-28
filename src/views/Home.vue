@@ -43,6 +43,7 @@ import Component from 'vue-class-component';
 
 import { UploadFile, Chunk, Status } from '../types/index';
 import { dateStr } from '../utils';
+import { requestChunk, mergeRequest } from '../api/index';
 
 const SIZE = 10 * 1024 * 1024;
 
@@ -68,9 +69,12 @@ export default class Home extends Vue {
     this.selectedFiles.forEach((file) => this.uploadFile(file));
   }
 
-  uploadFile(file: UploadFile) {
+  async uploadFile(file: UploadFile) {
     file.status = Status.Uploading;
-    console.log(file);
+
+    const chunksRequest = file.chunks.map((chunk) => requestChunk(chunk));
+    await Promise.all(chunksRequest);
+    await mergeRequest({ fileName: file.name });
   }
 
   enrichFile(rawFile: File): UploadFile {
