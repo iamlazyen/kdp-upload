@@ -4,14 +4,19 @@ interface AxiosConfig {
   data?: any;
   params?: any;
   headers?: any;
+  onUploadProgress?: (progressEvent: any) => void;
 }
 
 export default function axios(config: AxiosConfig) {
   return new Promise((resolve, reject) => {
     const {
-      data, url, method = 'post', headers = {},
+      data, url, method = 'post', headers = {}, onUploadProgress,
     } = config;
     const xhr = new XMLHttpRequest();
+
+    if (onUploadProgress) {
+      xhr.upload.onprogress = onUploadProgress;
+    }
 
     xhr.open(method, url);
     Object.keys(headers).forEach((key) => {

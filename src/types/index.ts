@@ -9,11 +9,13 @@ export interface UploadFile {
   end: string;
   status: Status;
   hash: string;
+  percent: number;
 }
 
 export interface Chunk {
   file: Blob;
   name: string;
+  percent: number;
   [property: string]: any;
 }
 

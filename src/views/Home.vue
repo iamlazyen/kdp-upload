@@ -23,6 +23,10 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="percent"
+        label="进度">
+      </el-table-column>
+      <el-table-column
         prop="status"
         label="状态">
       </el-table-column>
@@ -89,6 +93,7 @@ export default class Home extends Vue {
     result.end = '-';
     result.status = Status.Ready;
     result.hash = '';
+    result.percent = 0;
     return result;
   }
 
@@ -110,7 +115,8 @@ export default class Home extends Vue {
     result.file = chunk;
     result.name = file.name;
     result.hash = `${file.name}-${Math.floor(Math.random() * 100)}`;
-
+    result.percent = 0;
+    result.size = chunk.size;
     return result;
   }
 
@@ -124,8 +130,7 @@ export default class Home extends Vue {
       const worker = new Worker('/hash.js');
       worker.postMessage({ chunkList });
       worker.onmessage = (e) => {
-        const { percentage, hash } = e.data;
-        console.log(percentage, hash);
+        const { hash } = e.data;
         if (hash) {
           resolve(hash);
         }
@@ -135,10 +140,27 @@ export default class Home extends Vue {
 
   async uploadFile(file: UploadFile) {
     file.status = Status.Uploading;
-    console.log(file);
-    const chunksRequest = file.chunks.map((chunk) => requestChunk(chunk));
+    const chunksRequest = file.chunks.map(
+      (chunk) => requestChunk(chunk, this.chunkOnProgress(file, chunk)),
+    );
     await Promise.all(chunksRequest);
     await mergeRequest({ fileName: file.name, size: file.size, hash: file.hash });
+  }
+
+  chunkOnProgress(file: UploadFile, chunk: Chunk) {
+    return (e: any) => {
+      chunk.percent = (e.loaded / e.total);
+      file.percent = this.caluateFilePercent(file);
+    };
+  }
+
+  caluateFilePercent(file: UploadFile) {
+    const loaded = file.chunks.reduce((acc, chunk) => {
+      const { size, percent } = chunk;
+      return acc + percent * size;
+    }, 0);
+
+    return loaded / file.size * 100;
   }
 }
 

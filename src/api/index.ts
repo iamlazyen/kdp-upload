@@ -8,13 +8,14 @@ interface MergeData {
   hash: string;
 }
 
-export function requestChunk(data: Chunk) {
+export function requestChunk(data: Chunk, onUploadProgress: (e: any) => void) {
   const formDate = new FormData();
   Object.keys(data).forEach((key) => formDate.append(key, data[key]));
   return axios({
     url: 'http://localhost:3000/chunk',
     data: formDate,
     method: 'post',
+    onUploadProgress,
   });
 }
 
