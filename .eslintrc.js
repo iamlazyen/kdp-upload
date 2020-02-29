@@ -18,7 +18,9 @@ module.exports = {
     'no-plusplus': 'off',
     'no-param-reassign': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-var-requires': 'off'
+    '@typescript-eslint/no-var-requires': 'off',
+    'no-mixed-operators': 'off',
+    'no-restricted-properties': 'off'
   },
   overrides: [
     {
